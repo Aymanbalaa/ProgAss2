@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         addButton.setOnClickListener(v -> new InsertProfileDialogFragment().show(getSupportFragmentManager(), "InsertProfile"));
     }
 
-    private void loadProfiles() {
+    public void loadProfiles() {
         List<Profile> profiles = dbHelper.getAllProfiles(isById);
         List<String> displayInfo = profiles.stream()
                 .map(p -> isById ? String.valueOf(p.getId()) : p.getSurname() + ", " + p.getName())

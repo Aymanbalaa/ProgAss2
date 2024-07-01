@@ -1,11 +1,14 @@
 package com.example.progass2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
@@ -19,14 +22,20 @@ public class MainActivity extends AppCompatActivity {
     private boolean isById = false;
     private DatabaseHelper dbHelper;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         dbHelper = DatabaseHelper.getInstance(this);
+
         profileListView = findViewById(R.id.profileListView);
         addButton = findViewById(R.id.addButton);
+
+        ((TextView) findViewById(R.id.totalProfiles)).setText(dbHelper.getAllProfiles(true).size() +" profiles,"
+                    + "by Surname"); // hardcoded for now
+
 
         loadProfiles();
 
@@ -38,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         addButton.setOnClickListener(v -> new InsertProfileDialogFragment().show(getSupportFragmentManager(), "InsertProfile"));
+
     }
 
     public void loadProfiles() {

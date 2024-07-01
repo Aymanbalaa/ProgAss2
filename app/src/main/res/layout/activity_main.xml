@@ -6,11 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/totalProfiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
     <ListView
         android:id="@+id/profileListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/addButton" />
+        android:layout_above="@id/addButton"
+        android:layout_marginBottom="-73dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"

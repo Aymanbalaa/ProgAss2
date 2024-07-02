@@ -53,7 +53,7 @@ public class InsertProfileDialogFragment extends DialogFragment {
             return;
         }
 
-        if (name.isEmpty() || surname.isEmpty() || gpa < 0.0 || gpa > 4.3) {
+        if (name.isEmpty() || surname.isEmpty() || gpa < 0.0 || gpa > 4.3 || id > 99999999 || id < 10000000) {
             Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
         } else {
             DatabaseHelper dbHelper = DatabaseHelper.getInstance(getContext());

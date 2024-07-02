@@ -124,7 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         addAccess(id, "deleted");
     }
 
-    private void addAccess(long profileId, String accessType) {
+    public void addAccess(long profileId, String accessType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_PROFILE_ID, profileId);

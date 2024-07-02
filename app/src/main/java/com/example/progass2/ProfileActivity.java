@@ -2,14 +2,22 @@ package com.example.progass2;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 public class ProfileActivity extends AppCompatActivity {
+
+    private ListView accessListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +25,6 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -29,8 +36,21 @@ public class ProfileActivity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.nameTextView)).setText("Name: " + profile.getName());
         ((TextView) findViewById(R.id.surnameTextView)).setText("Surname: " + profile.getSurname());
-        ((TextView) findViewById(R.id.idTextView)).setText("ID: "+ profile.getId());
-        ((TextView) findViewById(R.id.gpaTextView)).setText("GPA: "+ String.format("%.1f", profile.getGpa()));
+        ((TextView) findViewById(R.id.idTextView)).setText("ID: " + profile.getId());
+        ((TextView) findViewById(R.id.gpaTextView)).setText("GPA: " + String.format("%.1f", profile.getGpa()));
+
+        accessListView = findViewById(R.id.accessListView);
+        loadAccessHistory(profileId);
+    }
+
+    private void loadAccessHistory(long profileId) {
+        List<Access> accessList = DatabaseHelper.getInstance(this).getAccessHistory(profileId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd @ HH:mm:ss", Locale.getDefault());
+        List<String> displayInfo = accessList.stream()
+                .map(a -> a.getAccessType() + " - " + sdf.format(a.getTimestamp()))
+                .collect(Collectors.toList());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayInfo);
+        accessListView.setAdapter(adapter);
     }
 
     @Override

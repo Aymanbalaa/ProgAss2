@@ -10,7 +10,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         addButton = findViewById(R.id.addButton);
 
         ((TextView) findViewById(R.id.totalProfiles)).setText(dbHelper.getAllProfiles(true).size() +" profiles,"
-                    + "by Surname"); // hardcoded for now
+                + "by Surname"); // hardcoded for now
 
 
         loadProfiles();

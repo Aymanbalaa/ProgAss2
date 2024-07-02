@@ -1,13 +1,14 @@
 package com.example.progass2;
 
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -52,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_ACCESS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_PROFILE_ID + " INTEGER,"
                 + COLUMN_ACCESS_TYPE + " TEXT,"
-                + COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
+                + COLUMN_TIMESTAMP + " INTEGER)");
     }
 
     @Override
@@ -127,6 +128,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_PROFILE_ID, profileId);
         values.put(COLUMN_ACCESS_TYPE, accessType);
+        values.put(COLUMN_TIMESTAMP, System.currentTimeMillis());  // Use current time in milliseconds
         db.insert(TABLE_ACCESS, null, values);
+    }
+
+    public List<Access> getAccessHistory(long profileId) {
+        List<Access> accessList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_ACCESS, new String[]{COLUMN_ACCESS_ID, COLUMN_PROFILE_ID, COLUMN_ACCESS_TYPE, COLUMN_TIMESTAMP},
+                COLUMN_PROFILE_ID + "=?", new String[]{String.valueOf(profileId)}, null, null, COLUMN_TIMESTAMP + " DESC");
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") Access access = new Access(
+                        cursor.getLong(cursor.getColumnIndex(COLUMN_ACCESS_ID)),
+                        cursor.getLong(cursor.getColumnIndex(COLUMN_PROFILE_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_ACCESS_TYPE)),
+                        new Date(cursor.getLong(cursor.getColumnIndex(COLUMN_TIMESTAMP)))
+                );
+                accessList.add(access);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return accessList;
     }
 }

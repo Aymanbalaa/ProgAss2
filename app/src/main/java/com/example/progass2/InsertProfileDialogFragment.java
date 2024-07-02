@@ -1,7 +1,5 @@
 package com.example.progass2;
 
-
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +10,7 @@ import androidx.fragment.app.DialogFragment;
 
 public class InsertProfileDialogFragment extends DialogFragment {
 
-    private EditText nameEditText, surnameEditText, gpaEditText;
+    private EditText idEditText, nameEditText, surnameEditText, gpaEditText;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -30,6 +28,7 @@ public class InsertProfileDialogFragment extends DialogFragment {
         super.onResume();
         Dialog dialog = getDialog();
         if (dialog != null) {
+            idEditText = dialog.findViewById(R.id.idEditText);
             nameEditText = dialog.findViewById(R.id.nameEditText);
             surnameEditText = dialog.findViewById(R.id.surnameEditText);
             gpaEditText = dialog.findViewById(R.id.gpaEditText);
@@ -37,6 +36,13 @@ public class InsertProfileDialogFragment extends DialogFragment {
     }
 
     private void saveProfile() {
+        long id = 0;
+        try {
+            id = Long.parseLong(idEditText.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Invalid ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String name = nameEditText.getText().toString().trim();
         String surname = surnameEditText.getText().toString().trim();
         float gpa = 0;
@@ -50,8 +56,14 @@ public class InsertProfileDialogFragment extends DialogFragment {
         if (name.isEmpty() || surname.isEmpty() || gpa < 0.0 || gpa > 4.3) {
             Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
         } else {
-            long id = DatabaseHelper.getInstance(getContext()).addProfile(name, surname, gpa);
-            if (id != -1) {
+            DatabaseHelper dbHelper = DatabaseHelper.getInstance(getContext());
+            Profile existingProfile = dbHelper.getProfile(id);
+            if (existingProfile != null) {
+                Toast.makeText(getContext(), "ID already exists", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            long newId = dbHelper.addProfile(id, name, surname, gpa);
+            if (newId != -1) {
                 ((MainActivity) getActivity()).loadProfiles();
             } else {
                 Toast.makeText(getContext(), "Failed to add profile", Toast.LENGTH_SHORT).show();
@@ -59,4 +71,3 @@ public class InsertProfileDialogFragment extends DialogFragment {
         }
     }
 }
-

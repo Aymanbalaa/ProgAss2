@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addButton;
     private boolean isById = false;
     private DatabaseHelper dbHelper;
+    private static final int PROFILE_REQUEST_CODE = 1;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             long profileId = dbHelper.getAllProfiles(isById).get(position).getId();
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             intent.putExtra("profileId", profileId);
-            startActivity(intent);
+            startActivityForResult(intent, PROFILE_REQUEST_CODE);
         });
 
         addButton.setOnClickListener(v -> new InsertProfileDialogFragment().show(getSupportFragmentManager(), "InsertProfile"));
@@ -75,5 +76,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PROFILE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                loadProfiles();
+            }
+        }
     }
 }

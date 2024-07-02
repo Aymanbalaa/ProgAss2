@@ -2,7 +2,9 @@ package com.example.progass2;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class ProfileActivity extends AppCompatActivity {
 
     private ListView accessListView;
+    private long profileId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        long profileId = getIntent().getLongExtra("profileId", -1);
+        profileId = getIntent().getLongExtra("profileId", -1);
         Profile profile = DatabaseHelper.getInstance(this).getProfile(profileId);
 
         ((TextView) findViewById(R.id.nameTextView)).setText("Name: " + profile.getName());
@@ -41,6 +44,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         accessListView = findViewById(R.id.accessListView);
         loadAccessHistory(profileId);
+
+        Button deleteButton = findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteProfile();
+            }
+        });
     }
 
     private void loadAccessHistory(long profileId) {
@@ -51,6 +62,12 @@ public class ProfileActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayInfo);
         accessListView.setAdapter(adapter);
+    }
+
+    private void deleteProfile() {
+        DatabaseHelper.getInstance(this).deleteProfile(profileId);
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override

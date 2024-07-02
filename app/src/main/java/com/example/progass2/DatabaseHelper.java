@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_PROFILES + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_NAME + " TEXT,"
                 + COLUMN_SURNAME + " TEXT,"
                 + COLUMN_GPA + " REAL)");
@@ -63,17 +63,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addProfile(String name, String surname, float gpa) {
+    public long addProfile(long id, String name, String surname, float gpa) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, id);
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_SURNAME, surname);
         values.put(COLUMN_GPA, gpa);
-        long id = db.insert(TABLE_PROFILES, null, values);
+        long newId = db.insert(TABLE_PROFILES, null, values);
 
         // Log creation in access table
-        addAccess(id, "created");
-        return id;
+        addAccess(newId, "created");
+        return newId;
     }
 
     public List<Profile> getAllProfiles(boolean sortBySurname) {
@@ -86,7 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") Profile profile = new Profile(
-                        cursor.getLong(cursor.getColumnIndex(COLUMN_ID)),
+                        cursor.getInt(cursor.getColumnIndex(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_NAME)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)),
                         cursor.getFloat(cursor.getColumnIndex(COLUMN_GPA))
@@ -105,7 +106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor != null && cursor.moveToFirst()) {
             @SuppressLint("Range") Profile profile = new Profile(
-                    cursor.getLong(cursor.getColumnIndex(COLUMN_ID)),
+                    cursor.getInt(cursor.getColumnIndex(COLUMN_ID)),
                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME)),
                     cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)),
                     cursor.getFloat(cursor.getColumnIndex(COLUMN_GPA))
